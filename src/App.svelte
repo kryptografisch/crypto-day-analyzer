@@ -1,12 +1,31 @@
 <script lang="ts">
+  import Controls from "./Controls.svelte";
+  import { fetchData, type Data } from "./data";
   import DataProvider from "./DataProvider.svelte";
 
-  console.log("test");
+  let data: Data[] = [];
+  let current: Date | undefined = undefined;
+
+  fetchData().then((csvData) => {
+    data = csvData;
+    // TODO: change this to "if today is a key of data array - use it, else last"
+    current = data[0]?.date ?? undefined;
+  });
 </script>
 
 <main>
   <section>
-    <DataProvider />
+    <DataProvider from={data[data.length - 1]?.date} to={data[0]?.date} />
+  </section>
+  <section>
+    <Controls
+      {current}
+      from={data[data.length - 1]?.date}
+      to={data[0]?.date}
+      change={(date) => {
+        current = date;
+      }}
+    />
   </section>
   <section>plot</section>
 </main>
